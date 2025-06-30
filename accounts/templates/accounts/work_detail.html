@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container mt-4">
+        <h2>{{ work.title }}</h2>
+        <p><strong>Автор:</strong> {{ work.author }}</p>
+        <p><strong>Жанр:</strong> {{ work.genre }}</p>
+        <p><strong>Опубліковано:</strong> {{ work.published_at }}</p>
+
+        <h5>Оцінити твір:</h5>
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ rating_form.value }}
+            <button type="submit" name="rating_submit" class="btn btn-success">Поставити рейтинг</button>
+        </form>
+
+        <p class="mt-3">Середній рейтинг: {{ work.average_rating }}/5 (усього {{ work.ratings.count }} оцінок)</p>
+
+        {% if user.is_authenticated and user == work.author %}
+            <a href="{% url 'edit_work' pk=work.id %}" class="btn btn-primary">Редагувати публікацію</a>
+        {% endif %}
+
+        <hr>
+
+
+        <p>{{ page_obj.object_list.0|linebreaks }}</p>
+
+        <nav aria-label="Навігація сторінками" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">« Попередня</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">« Попередня</span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна »</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Наступна »</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <hr>
+        <h4>Коментарі</h4>
+
+        {% if user.is_authenticated %}
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" name="comment_submit" class="btn btn-success">Додати коментар</button>
+            </form>
+        {% else %}
+            <p>Щоб залишити коментар, <a href="{% url 'login' %}?next={{ request.path }}">увійдіть у систему</a>.</p>
+        {% endif %}
+
+        {% for comment in comments %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">{{ comment.content|linebreaks }}</p>
+                    <small class="text-muted">
+                        від
+                        {% if comment.user %}
+                            {{ comment.user.username }}
+                        {% else %}
+                            Анонім
+                        {% endif %}
+                        | {{ comment.created_at|date:"d.m.Y H:i" }}
+                    </small>
+
+                </div>
+            </div>
+        {% empty %}
+            <p>Коментарів поки немає.</p>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+
+
+
+
+

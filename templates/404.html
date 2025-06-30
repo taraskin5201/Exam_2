@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="text-center mt-5">
+        <h1>Сторінку не знайдено (404)</h1>
+        <img src="https://memepedia.ru/wp-content/uploads/2025/05/okak-8-1.png" alt="404 image" style="max-width: 400px;">
+        <p>На жаль, такої сторінки не існує. Перевірте адресу або поверніться на <a
+                href="{% url 'work_list' %}">головну</a>.</p>
+    </div>
+{% endblock %}

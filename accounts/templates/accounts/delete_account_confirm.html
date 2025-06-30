@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <h3>Видалення акаунта</h3>
+    <p>Ви впевнені, що хочете видалити свій акаунт? Ця дія необоротна.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Видалити акаунт</button>
+      <a href="/accounts/works" class="btn btn-secondary">Відмінити</a>
+    </form>
+  </div>
+{% endblock %}

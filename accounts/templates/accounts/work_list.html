@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container mt-4">
+        <h2>Усі твори</h2>
+
+        <div class="mt-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'create_work' %}" class="btn btn-primary">Опублікувати новий твір</a>
+            {% endif %}
+        </div>
+        <br>
+        <!-- Сортування -->
+        <form method="get" class="mb-4 d-flex gap-3 align-items-center">
+            <select name="genre" class="form-select" onchange="this.form.submit()">
+                <option value="">Усі жанри</option>
+                {% for g in genres %}
+                    <option value="{{ g }}" {% if request.GET.genre == g %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="">Сортувати за…</option>
+                <option value="rating" {% if request.GET.sort == "rating" %}selected{% endif %}>Оцінкою</option>
+                <option value="comments" {% if request.GET.sort == "comments" %}selected{% endif %}>Коментарями</option>
+                <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Назвою</option>
+            </select>
+        </form>
+
+        <!-- Список творів -->
+        {% for work in works %}
+            <div class="card mb-3 p-3">
+                <h5>{{ work.title }}</h5>
+                <p>Жанр: {{ work.genre }}</p>
+                <p>Середній рейтинг: {{ work.average_rating|default:"—" }}/5</p>
+                <p>Коментарів: {{ work.comment_count }}</p>
+                <a href="{% url 'work_detail' work.pk %}" class="btn btn-outline-primary">Детальніше</a>
+            </div>
+        {% endfor %}
+        <br>
+
+        <ul class="list-group">
+            {% for work in page_obj %}
+                <li class="list-group-item">
+                    <a href="{% url 'work_detail' work.pk %}" style="text-decoration: none; color: inherit; font-size: 20px; font-weight: bold;" >{{ work.title }}</a>
+                    — {{ work.genre }} | Автор: {{ work.author }} | Середній рейтинг: {{ work.avg_rating|default:"Немає оцінок" }}
+
+                </li>
+            {% empty %}
+                <li class="list-group-item">Творів ще немає.</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Пагінація -->
+        <nav aria-label="Навігація сторінками" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">« Попередня</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">« Попередня</span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна »</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Наступна »</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+

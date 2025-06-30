@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-4">Вітаємо на Письменницькій платформі!</h1>
+    <p class="lead">Досліджуйте, створюйте та діліться своїми творами з іншими.</p>
+
+    <div class="mt-4">
+        <a href="{% url 'work_list' %}" class="btn btn-primary btn-lg mb-2">Перейти до творів</a>
+        {% if not user.is_authenticated %}
+            <div>
+                <a href="{% url 'login' %}" class="btn btn-outline-success me-2">Увійти</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-info">Зареєструватися</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

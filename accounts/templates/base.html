@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Письменницька платформа</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+    <a class="navbar-brand" href="#">Письменницька платформа</a>
+    <div class="ml-auto">
+        {% if user.is_authenticated %}
+            Привіт, {{ user.username }}
+            <a href="{% url 'create_work' %}" class="btn btn-success">Опублікувати новий твір</a>
+            <a href="{% url 'work_list' %}" class="btn btn-primary">Усі твори</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Редагувати профіль</a>
+            <a href="{% url 'password_change' %}" class="btn btn-primary">Змінити пароль</a>
+            <a href="{% url 'delete_account' %}" class="btn btn-danger">Видалити акаунт</a>
+            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"  class="btn btn-danger">
+                    Вийти
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-success">Вхід</a>
+            <a href="{% url 'register' %}" class="btn btn-success">Реєстрація</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

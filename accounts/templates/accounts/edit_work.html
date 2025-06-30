@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Редагувати твір</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Зберегти зміни</button>
+    </form>
+
+    <hr>
+
+    <form method="post" action="{% url 'delete_work' work.id %}" onsubmit="return confirm('Ви впевнені, що хочете видалити цей твір?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Видалити публікацію</button>
+    </form>
+</div>
+{% endblock %}
